@@ -51,7 +51,7 @@
 | 오디오 | `AVAudioEngine` + `AVAudioSourceNode` | 직접 파형을 합성해 지연 없이 피치 변경 |
 | 음량 입력 | `NSEvent` pressure (Force Touch 트랙패드) | 트랙패드의 달인에서 써본 기술 재사용 |
 | UI | SwiftUI | 단일 창 + 메뉴바 |
-| 빌드 | Swift Package + `build.sh` | 기존 프로젝트 구조 재사용 |
+| 빌드 | `swiftc` + `build.sh` (SwiftPM 없이) | 기존 프로젝트와 같은 방식, Command Line Tools만으로 빌드 |
 
 > **왜 웹이 아닌가:** 브라우저는 IOKit HID 센서에 접근할 수 없다.
 
@@ -144,18 +144,19 @@
 ## 8. 코드 구조
 
 ```
-Sources/LidTheremin/
-├── App/            LidThereminApp.swift, 메뉴바
-├── Sensor/
-│   ├── LidAngleSensor.swift     // IOKit HID 래퍼, 120Hz 폴링
-│   ├── OneEuroFilter.swift
-│   └── FallbackInput.swift      // 트랙패드 세로 위치
-├── Audio/
-│   ├── SynthEngine.swift        // AVAudioSourceNode, 파형/보간
-│   ├── Presets.swift
-│   └── PitchMapper.swift        // 각도 → 주파수, 스케일 스냅
-├── Practice/       곡 데이터(JSON), 판정
-└── UI/             SwiftUI 화면
+Sources/
+├── Core/                        // UI 없는 코드. 테스트 대상
+│   ├── Sensor/
+│   │   ├── AngleSource.swift        // 입력원 프로토콜
+│   │   ├── LidAngleSensor.swift     // IOKit HID 래퍼, 120Hz 폴링
+│   │   ├── OneEuroFilter.swift
+│   │   ├── AngleSmoother.swift      // 이상치 제거 + 필터
+│   │   └── FallbackInput.swift      // 트랙패드 세로 위치 (M5)
+│   ├── Audio/                   // SynthEngine, Presets, PitchMapper (M2~)
+│   └── Practice/                // 곡 데이터(JSON), 판정 (M4)
+├── App/                         // SwiftUI 화면, 메뉴바 (M2~)
+└── Tools/lidangle/main.swift    // 각도 확인용 CLI
+Tests/main.swift                 // 자체 테스트 (./build.sh test)
 ```
 
 - `LidAngleSensor`는 프로토콜(`AngleSource`)로 감싸서 테스트와 대체 입력이 같은 인터페이스를 쓴다.
@@ -178,7 +179,7 @@ Sources/LidTheremin/
 
 | 단계 | 기간 | 내용 | 완료 기준 |
 |---|---|---|---|
-| M1 센서 | 3일 | `LidAngleSensor` + 콘솔에 각도 출력 + 필터 | 뚜껑을 움직이면 부드러운 실수 각도가 찍힌다 |
+| M1 센서 ✅ | 3일 | `LidAngleSensor` + 콘솔에 각도 출력 + 필터 | 뚜껑을 움직이면 부드러운 실수 각도가 찍힌다 |
 | M2 소리 | 1주 | `SynthEngine` 사인파, 각도→피치, 트랙패드 음량 | 뚜껑으로 사이렌 소리를 낼 수 있다 |
 | M3 악기 | 1주 | 스케일 스냅, 음색 4종, 메인 UI, 캘리브레이션 | "작은 별"을 연주할 수 있다 |
 | M4 연습 모드 | 1주 | 곡 5개, 판정, 점수 | 친구가 처음 해보고 끝까지 플레이한다 |

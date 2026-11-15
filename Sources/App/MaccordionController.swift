@@ -8,7 +8,7 @@ enum PlayMode {
 }
 
 /// 센서와 입력을 받아 지금 모드에 맞게 SynthEngine에 전달한다.
-final class ThereminController {
+final class MaccordionController {
     let synth = SynthEngine()
     var mapper = PitchMapper()
     var keyboard = AccordionKeyboard()

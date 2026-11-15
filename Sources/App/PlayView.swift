@@ -4,7 +4,7 @@ import AppKit
 /// - 테레민: 트랙패드 압력/스페이스바 = 음량, 뚜껑 각도 = 음높이
 /// - 아코디언: 키보드 = 건반, 뚜껑 여닫는 속도 = 바람
 final class PlayView: NSView {
-    let controller: ThereminController
+    let controller: MaccordionController
 
     private var isPressing = false
     private var pressure: Double = 0
@@ -30,7 +30,7 @@ final class PlayView: NSView {
         static let space: UInt16 = 49, tab: UInt16 = 48, up: UInt16 = 126, down: UInt16 = 125
     }
 
-    init(controller: ThereminController) {
+    init(controller: MaccordionController) {
         self.controller = controller
         super.init(frame: .zero)
         // Force Touch를 끝까지 눌러도 시스템 '찾아보기' 같은 동작 대신 압력값만 받는다.

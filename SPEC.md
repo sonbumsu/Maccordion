@@ -178,6 +178,8 @@ Sources/
 │   └── Practice/                // 곡 데이터(JSON), 판정 (M4)
 ├── App/                         // SwiftUI 화면, 메뉴바 (M2~)
 └── Tools/lidangle/main.swift    // 각도 확인용 CLI
+Resources/                       // LogoSource.png(원본), Logo.png(투명 배경), AppIcon.icns
+Tools/                           // remove_background.swift, make_icon.swift (./build.sh logo)
 Tests/main.swift                 // 자체 테스트 (./build.sh test)
 ```
 
